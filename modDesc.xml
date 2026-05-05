@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="105">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<modDesc descVersion="104">
     <author>Lisek</author>
-	<contributors>Az#4971, GMNGjoy, olaf.tnt</contributors>        
-    <version>1.0.1.0</version>
-	<title>
-		<en>Upgrade Your Factory</en>
-		<pl>Ulepsz Swoją Fabrykę</pl>
-		<fr>Améliorez Votre Usine</fr>
-		<de>Verbessern Sie Ihre Fabrik</de>
-	</title>
+    <version>1.1.0.0</version>
+    <contributors>Az#4971, olaf.tnt</contributors>
+    <title>
+        <en>Upgrade Your Factory</en>
+        <pl>Ulepsz swoją fabrykę</pl>
+        <fr>Améliorez votre usine</fr>
+        <de>Verbessern Sie Ihre Fabrik</de>
+    </title>
     <description>
-        <en><![CDATA[
+        <en>
 Upgrade your factories! This mod allows you to increase production speed and storage capacity, so you don’t need to place multiple identical factories.
 
 Features:
@@ -23,16 +23,15 @@ Features:
 
 Additional information:
 - The following factories are excluded from the upgrade: Playground maker hall, Wagon builder (Riverbend Springs) and Piano manufacture (Zielonka)
-- By default, the maximum upgrade level is 15. This can be changed in the UpgradeYourFactory.xml file!
-- Currently, the mod does not support multiplayer mode.
+- By default, the maximum upgrade level is 15. This can be changed in the UpgradeYourFactory.xml file or with the console command uyfMaxLevel!
 
-Changelog 1.0.1.0
-- Updated savegame data stored for flexibility and compatibility with other mods.
-- Added feature to scale loading station discharge speed based on upgrade level.
+Changelog 1.1.0.0:
+- Added support for multiplayer mode
+- Updated savegame xml structure, solved issue with fillType indexes
 
-In case of any problems with the mod, please contact me via discord: lisekv1]]>
+In case of any problems with the mod, please contact me via discord: lisekv1
         </en>
-		<pl><![CDATA[
+        <pl>
 Ulepsz swoje fabryki! Ten mod pozwala zwiększać prędkość produkcji oraz pojemność magazynów, dzięki czemu nie musisz stawiać wielu takich samych fabryk.
 
 Cechy:
@@ -45,16 +44,14 @@ Cechy:
 
 Dodatkowe informacje:
 - Wyłączone z ulepszania są fabryki: Hala tworzenia placów zabaw, Konstrukcja wozów (Riverbend Springs) oraz Wytwórnia fortepianów (Zielonka)
-- Domyślnie maksymalny poziom ulepszenia to 15. Można to zmienić w pliku UpgradeYourFactory.xml!
-- Obecnie mod nie obsługuje trybu multiplayer.
+- Domyślnie maksymalny poziom ulepszenia to 15. Można to zmienić w pliku UpgradeYourFactory.xml lub komendą w konsoli uyfMaxLevel!
 
-Dziennik zmian 1.0.1.0
-- Zaktualizowano dane zapisów gry, aby zapewnić większą elastyczność i kompatybilność z innymi modami.
-- Dodano funkcję skalowania prędkości rozładunku stacji załadunkowej w zależności od poziomu ulepszenia.
+Changelog 1.1.0.0:
+- Dodano wsparcie dla trybu multiplayer
 
-W razie problemów z modem zapraszam do kontaktu poprzez discord: lisekv1]]>
+W razie problemów z modem zapraszam do kontaktu poprzez discord: lisekv1
 		</pl>
-		<fr><![CDATA[
+        <fr>
 Améliorez vos usines ! Ce mod vous permet d'augmenter la vitesse de production et la capacité de stockage, vous n'avez donc pas besoin de placer plusieurs usines identiques.
 
 Fonctionnalités:
@@ -67,16 +64,14 @@ Fonctionnalités:
 
 Informations complémentaires:
 - Les usines suivantes sont exclues de la modernisation : Playground Creation Hall, Carriage Construction (Riverbend Springs) et Piano Factory (Zielonka).
-- Par défaut, le niveau d'amélioration maximum est de 15. Cela peut être modifié dans le fichier UpgradeYourFactory.xml.
-- Actuellement, le mod ne prend pas en charge le mode multijoueur.
+- Par défaut, le niveau d'amélioration maximum est de 15. Cela peut être modifié dans le fichier UpgradeYourFactory.xml ou avec la commande de console uyfMaxLevel!
 
-Journal des modifications 1.0.1.0
-- Mise à jour des données de sauvegarde pour plus de flexibilité et de compatibilité avec d'autres mods.
-- Ajout d'une fonctionnalité permettant d'ajuster la vitesse de déchargement de la station de chargement en fonction du niveau d'amélioration.
+Changelog 1.1.0.0:
+- Ajout du support multijoueur mode
 
-Si vous avez des problèmes avec le mod, veuillez me contacter via discord: lisekv1]]>
+Si vous avez des problèmes avec le mod, veuillez me contacter via discord: lisekv1
 		</fr>
-		<de><![CDATA[
+        <de>
 Verbessere deine Fabriken! Dieser Mod ermöglicht es Ihnen, die Produktionsgeschwindigkeit und die Lagerkapazität zu erhöhen, sodass Sie nicht mehrere identische Fabriken platzieren müssen.
 
 Funktionen:
@@ -89,45 +84,61 @@ Funktionen:
 
 Zusatzinformation:
 - Die folgenden Fabriken sind vom Upgrade ausgeschlossen: Spielplatz-Erstellungshalle, Kutschenbau (Riverbend Springs) und Klavierfabrik (Zielonka)
-- Standardmäßig beträgt die maximale Upgradestufe 15. Dies kann in der UpgradeYourFactory.xml Datei geändert werden.
-- Derzeit unterstützt die Mod den Multiplayer-Modus nicht.
+- Standardmäßig beträgt die maximale Upgrade-Stufe 15. Dies kann in der Datei UpgradeYourFactory.xml oder mit dem Konsolenbefehl uyfMaxLevel geändert werden!
 
-Änderungsprotokoll 1.0.1.0
-- Aktualisierte Speicherdaten für mehr Flexibilität und Kompatibilität mit anderen Mods.
-- Funktion hinzugefügt, um die Entladegeschwindigkeit der Verladestation abhängig vom Ausbaulevel anzupassen.
+Changelog 1.1.0.0:
+- Unterstützung für Multiplayer-Modus hinzugefügt
 
-Wenn Sie Probleme mit dem Mod haben, kontaktieren Sie mich bitte über Discord: lisekv1]]>
+Wenn Sie Probleme mit dem Mod haben, kontaktieren Sie mich bitte über Discord: lisekv1
 		</de>
     </description>
     <iconFilename>icon_UpgYourFactory.dds</iconFilename>
-    <multiplayer supported="false"/>
+    <multiplayer supported="true"/>
     <extraSourceFiles>
-        <sourceFile filename="UpgradeYourFactory.lua" />
+        <sourceFile filename="UpgradeYourFactory.lua"/>
     </extraSourceFiles>
     <l10n>
         <text name="uyf_upgrade">
             <en>Upgrade</en>
-			<pl>Ulepsz</pl>
-			<fr>Améliorer</fr>
-			<de>Upgrade</de>
+            <pl>Ulepsz</pl>
+            <fr>Améliorer</fr>
+            <de>Upgrade</de>
         </text>
+		<text name="uyf_downgrade">
+			<en>Downgrade</en>
+			<pl>Obniż poziom</pl>
+			<fr>Rétrograder</fr>
+			<de>Herabstufen</de>
+		</text>
         <text name="uyf_upgrade_dialog">
             <en>Upgrade %s to level %d for %s?</en>
-			<pl>Ulepszyć %s do poziomu %d za %s?</pl>
-			<fr>Améliorer %s au niveau %s pour %s</fr>
-			<de>Upgrade %s auf Stufe %d (%s)</de>
+            <pl>Ulepszyć %s do poziomu %d za %s?</pl>
+            <fr>Améliorer %s au niveau %s pour %s</fr>
+            <de>Upgrade %s auf Stufe %d (%s)</de>
+        </text>
+		<text name="uyf_downgrade_dialog">
+            <en>Downgrade %s to level %d?</en>
+            <pl>Obniżyć poziom %s do poziomu %d?</pl>
+            <fr>Rétrograder %s au niveau %d ?</fr>
+            <de>%s auf Stufe %d herabstufen?</de>
         </text>
         <text name="uyf_max_level">
             <en>Your production is already at maximum level.</en>
-			<pl>Twoja produkcja jest już na maksymalnym poziomie.</pl>
-			<fr>Votre usine est déjà au niveau maximum</fr>
-			<de>Ihre Produktion ist bereits auf dem Höchststand.</de>
+            <pl>Twoja produkcja jest już na maksymalnym poziomie.</pl>
+            <fr>Votre usine est déjà au niveau maximum</fr>
+            <de>Ihre Produktion ist bereits auf dem Höchststand.</de>
         </text>
-		<text name="uyf_upgrade_factory">
-			<en>Upgrade Factory</en>
-			<pl>Ulepsz fabrykę</pl>
-			<fr>Améliorer l'usine</fr>
-			<de>Verbesserung die Fabrik</de>
-		</text>
+        <text name="uyf_upgrade_factory">
+            <en>Upgrade Factory</en>
+            <pl>Ulepsz fabrykę</pl>
+            <fr>Améliorer l'usine</fr>
+            <de>Verbesserung die Fabrik</de>
+        </text>
+		<text name="uyf_downgrade_factory">
+            <en>Downgrade Factory</en>
+            <pl>Obniż poziom fabryki</pl>
+            <fr>Rétrograder l'usine</fr>
+            <de>Fabrik herabstufen</de>
+        </text>
     </l10n>
 </modDesc>

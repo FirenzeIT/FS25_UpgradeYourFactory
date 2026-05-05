@@ -2,14 +2,18 @@ local modDirectory = g_currentModDirectory
 local modName = g_currentModName
 local xmlFilename = nil
 
-UpgradeYourFactory = {
-	MAX_LEVEL = 15
-}
+UpgradeYourFactory = UpgradeYourFactory or {}
+UpgradeYourFactory.MAX_LEVEL = UpgradeYourFactory.MAX_LEVEL or 15
+UpgradeYourFactory.SORT_BY_LEVEL = UpgradeYourFactory.SORT_BY_LEVEL or true
 
+source(modDirectory .. "SyncMaxLevelEvent.lua")
+source(modDirectory .. "SyncSortByLevelEvent.lua")
+source(modDirectory .. "UpgradeProductionEvent.lua")
 source(modDirectory .. "InGameMenuUpgradeYourFactory.lua")
+source(modDirectory .. "SettingsUI.lua")
 addModEventListener(UpgradeYourFactory)
 
-function UFInfo(infoMessage, ...)
+function UYFInfo(infoMessage, ...)
 	print(string.format("  UpgradeYourFactory: " .. infoMessage, ...))
 end
 
@@ -18,6 +22,9 @@ function UpgradeYourFactory:loadMap()
 	self.newSavegame = not g_currentMission.missionInfo.savegameDirectory or nil
 	self.loadedProductions = {}
 
+	g_currentMission.uyf = g_currentMission.uyf or {}
+	g_currentMission.uyf.maxLevel = self.MAX_LEVEL
+
 	InGameMenuUpgradeYourFactory:initialize()
 
 	if not self.newSavegame then
@@ -25,7 +32,10 @@ function UpgradeYourFactory:loadMap()
 	end
 	self:loadXML()
 
-	addConsoleCommand('uyfMaxLevel', 'Update UpgradeYourFactory max level', 'updateml', self)
+	if g_server ~= nil then
+        addConsoleCommand("uyfMaxLevel", "Update UpgradeYourFactory max level", "updateMaxLevel", self)
+		addConsoleCommand("uyfToggleSortByLevel", "Toggle UpgradeYourFactory sort by level setting", "updateSortByLevel", self)
+    end
 	g_messageCenter:subscribe(MessageType.SAVEGAME_LOADED, self.onSavegameLoaded, self)
 end
 
@@ -36,7 +46,8 @@ end
 
 ---Hooks into the ModEventListener:onSavegameLoaded() function
 function UpgradeYourFactory:onSavegameLoaded()
-	self:initializeLoadedProductions()
+    self:initializeLoadedProductions()
+	UYFInfo("Global MaxLevel currently set to: "..self.MAX_LEVEL)
 end
 
 ---Local helper function to get the production point based on it's placeable position on the map
@@ -44,11 +55,13 @@ local function getProductionPointFromPosition(pos)
 	if #g_currentMission.productionChainManager.farmIds < 1 then
 		return nil
 	end
-
-	for _,prod in ipairs(g_currentMission.productionChainManager.farmIds[1].productionPoints) do
-		local x, y, z = getWorldTranslation(prod.owningPlaceable.rootNode)
-		if MathUtil.getPointPointDistanceSquared(pos.x, pos.z, x, z) < 0.0001 then
-			return prod
+	
+	for _, farmData in pairs(g_currentMission.productionChainManager.farmIds) do
+		for _,prod in ipairs(farmData.productionPoints) do
+			local x, y, z = getWorldTranslation(prod.owningPlaceable.rootNode)
+			if MathUtil.getPointPointDistanceSquared(pos.x, pos.z, x, z) < 0.0001 then
+				return prod
+			end
 		end
 	end
 	return nil
@@ -105,26 +118,42 @@ local function getOverallProductionValue(basePrice, lvl)
 	return basePrice + value
 end
 
----Format the poduction point with the current level ie: 3 - Bakery
-local function prodPointUFName(basename, level)
-	return string.format("%d - %s", level, basename)
+---Format the poduction point with the current level ie: 3 - Bakery or Bakery [Lv:3]
+local function prodPointNameWithLevel(basename, level, prodpoint, sortByLevel)
+    if prodpoint == nil or prodpoint.owningPlaceable == nil then
+        return basename
+    end
+
+    local farmId = prodpoint.owningPlaceable:getOwnerFarmId() or 0
+
+    if g_server ~= nil or (farmId > 0 and farmId ~= FarmManager.SPECTATOR_FARM_ID) then
+		if sortByLevel then
+			return string.format("%d - %s", level, basename)
+		else
+			return string.format("%s [Lv:%d]", basename, level)
+		end
+    end
+
+    return basename
 end
 
 ---Update the production point based on the chosen level
 function UpgradeYourFactory:adjProdPoint2lvl(prodpoint, lvl)
-	-- update the name
-	prodpoint.name = prodPointUFName(prodpoint.baseName, lvl)
+	UYFInfo("Adjust Production Point '%s' to level %d.", prodpoint.name, lvl)
+
+	-- update the name with the level
+	prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, lvl, prodpoint, self.SORT_BY_LEVEL)
 
 	-- update cycles based on the level
-	for _,prod in ipairs(prodpoint.productions) do
-		prod.cyclesPerMinute = getCycleAtLvl(prod.baseCyclesPerMinute, lvl)
-		prod.cyclesPerHour = getCycleAtLvl(prod.baseCyclesPerHour, lvl)
-		prod.cyclesPerMonth = getCycleAtLvl(prod.baseCyclesPerMonth, lvl)
+    for _,prod in ipairs(prodpoint.productions) do
+        prod.cyclesPerMinute = getCycleAtLvl(prod.baseCyclesPerMinute, lvl)
+        prod.cyclesPerHour = getCycleAtLvl(prod.baseCyclesPerHour, lvl)
+        prod.cyclesPerMonth = getCycleAtLvl(prod.baseCyclesPerMonth, lvl)
 
-		prod.costsPerActiveMinute = getActiveCostAtLvl(prod.baseCostsPerActiveMinute, lvl)
-		prod.costsPerActiveHour = getActiveCostAtLvl(prod.baseCostsPerActiveHour, lvl)
-		prod.costsPerActiveMonth = getActiveCostAtLvl(prod.baseCostsPerActiveMonth, lvl)
-	end
+        prod.costsPerActiveMinute = getActiveCostAtLvl(prod.baseCostsPerActiveMinute, lvl)
+        prod.costsPerActiveHour = getActiveCostAtLvl(prod.baseCostsPerActiveHour, lvl)
+        prod.costsPerActiveMonth = getActiveCostAtLvl(prod.baseCostsPerActiveMonth, lvl)
+    end
 
 	-- update the storage capacities based on the level
 	for ft,baseCapacity in pairs(prodpoint.storage.baseCapacities) do
@@ -134,60 +163,77 @@ function UpgradeYourFactory:adjProdPoint2lvl(prodpoint, lvl)
 	-- update the storage capacities based on the level
 	if prodpoint.loadingStation ~= nil then
 		for lt,loadingTrigger in pairs(prodpoint.loadingStation.loadTriggers) do
-			local oldFillSpeedPerMS = loadingTrigger.fillLitersPerMS
-			local newFillSpeedPerMS = getDischargeSpeedAtLvl(loadingTrigger.fillLitersPerMS, lvl)
-			prodpoint.loadingStation.loadTriggers[lt].fillLitersPerMS = newFillSpeedPerMS
-			printf('-- UpgradeYourFactory :: loadTrigger speed updated from %s to %s', oldFillSpeedPerMS, newFillSpeedPerMS)
+			local oldFillLitersPerMS
+			if not loadingTrigger.oldFillLitersPerMS then
+				oldFillLitersPerMS = loadingTrigger.fillLitersPerMS
+				prodpoint.loadingStation.loadTriggers[lt].oldFillLitersPerMS = oldFillLitersPerMS
+			else
+				oldFillLitersPerMS = loadingTrigger.oldFillLitersPerMS
+			end
+
+			local newFillLitersPerMS = getDischargeSpeedAtLvl(oldFillLitersPerMS, lvl)
+			prodpoint.loadingStation.loadTriggers[lt].fillLitersPerMS = newFillLitersPerMS
+			if oldFillLitersPerMS ~= newFillLitersPerMS then
+				UYFInfo("Updated loadingStation discharge speed for '%s' to %d liters/second.",prodpoint.name, (newFillLitersPerMS*1000) )
+			end
 		end
 	end
 
 	-- update the prices to match the upgraded level
-	prodpoint.owningPlaceable.totalValue = getOverallProductionValue(prodpoint.owningPlaceable.price, lvl)
-	prodpoint.owningPlaceable.upgradePrice = getUpgradePriceAtLvl(prodpoint.owningPlaceable.price, lvl)
-	prodpoint.owningPlaceable.getSellPrice = function ()
-		local priceMultiplier = 0.75
-		local maxAge = prodpoint.owningPlaceable.storeItem.lifetime
-		if maxAge ~= nil and maxAge ~= 0 then
-			priceMultiplier = priceMultiplier * math.exp(-3.5 * math.min(prodpoint.owningPlaceable.age / maxAge, 1))
-		end
-		return math.floor(prodpoint.owningPlaceable.totalValue * math.max(priceMultiplier, 0.05))
-	end
+    prodpoint.owningPlaceable.totalValue = getOverallProductionValue(prodpoint.owningPlaceable.price, lvl)
+    prodpoint.owningPlaceable.upgradePrice = getUpgradePriceAtLvl(prodpoint.owningPlaceable.price, lvl)
+    prodpoint.owningPlaceable.getSellPrice = function ()
+        local priceMultiplier = 0.75
+        local maxAge = prodpoint.owningPlaceable.storeItem.lifetime
+        if maxAge ~= nil and maxAge ~= 0 then
+            priceMultiplier = priceMultiplier * math.exp(-3.5 * math.min(prodpoint.owningPlaceable.age / maxAge, 1))
+        end
+        return math.floor(prodpoint.owningPlaceable.totalValue * math.max(priceMultiplier, 0.05))
+    end
 end
 
 ---Initialize all the loaded productions, gets called during the loadMap() phase
 function UpgradeYourFactory:initializeLoadedProductions()
+	UYFInfo("initializeLoadedProductions %d", #self.loadedProductions)
 	if self.newSavegame or #self.loadedProductions < 1 then
 		return
 	end
 
-	for _,loadedProd in ipairs(self.loadedProductions) do
+	local isMP = g_currentMission.missionDynamicInfo.isMultiplayer
+	local forcedFarmId = 1
+
+	for _, loadedProd in ipairs(self.loadedProductions) do
 		local prodpoint = getProductionPointFromPosition(loadedProd.position)
-		if prodpoint then
-			if prodpoint.isUpgradable then
-				prodpoint.productionLevel = loadedProd.level
-				-- prodpoint.owningPlaceable.price = loadedProd.basePrice
-				prodpoint.owningPlaceable.totalValue = getOverallProductionValue(prodpoint.owningPlaceable.price, loadedProd.level)
+		if prodpoint ~= nil then
+			local placeable = prodpoint.owningPlaceable
+			local currentFarmId = placeable:getOwnerFarmId()
 
-				-- adjust the production based on level
-				self:adjProdPoint2lvl(prodpoint, loadedProd.level)
+			if not isMP and currentFarmId ~= 1 then
+				placeable:setOwnerFarmId(forcedFarmId)
+				currentFarmId = forcedFarmId
+			end
 
-				-- overwrite the savegame capacities with our stored capacities
-				self:setFillLevelsFromConfig(prodpoint, loadedProd.fillLevels)
+			if (isMP and currentFarmId == loadedProd.farmId) or (not isMP and currentFarmId == 1) then
+				if prodpoint.isUpgradable then
+					prodpoint.productionLevel = loadedProd.level
+					-- adjust the prodction point to the latest level
+					self:adjProdPoint2lvl(prodpoint, loadedProd.level)
+
+					-- alwawys use this function to set the fillLevels - the new loadedProd.fillLevels CANNOT be set into the prodpoint directly.
+					self:setFillLevelsFromConfig(prodpoint, loadedProd.fillLevels)
+				end
 			end
 		end
 	end
 end
 
----Initialize a specific production, called in a loop
 function UpgradeYourFactory:initializeProduction(prodpoint)
 	if not prodpoint.isUpgradable then
 		prodpoint.isUpgradable = true
 		prodpoint.productionLevel = 1
 
 		prodpoint.baseName = prodpoint:getName()
-		prodpoint.name = prodPointUFName(prodpoint:getName(), 1)
-
-		-- prodpoint.owningPlaceable.basePrice = prodpoint.owningPlaceable.price
+		prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, 1, prodpoint, self.SORT_BY_LEVEL)
 		prodpoint.owningPlaceable.upgradePrice = getUpgradePriceAtLvl(prodpoint.owningPlaceable.price, 1)
 		prodpoint.owningPlaceable.totalValue = prodpoint.owningPlaceable.price
 
@@ -205,19 +251,19 @@ function UpgradeYourFactory:initializeProduction(prodpoint)
 		for ft,val in pairs(prodpoint.storage.capacities) do
 			prodpoint.storage.baseCapacities[ft] = val
 		end
+
+		local farmId = prodpoint.owningPlaceable:getOwnerFarmId() or 0
+		if farmId > 0 and farmId ~= FarmManager.SPECTATOR_FARM_ID then
+			UpgradeYourFactory:adjProdPoint2lvl(prodpoint, 1)
+		else
+			prodpoint.name = prodpoint.baseName
+		end
 	end
 end
 
 ---Initialize a specific production, called in a loop
 function UpgradeYourFactory:setFillLevelsFromConfig(prodpoint, fillLevels)
 	if prodpoint.isUpgradable then
-
-		-- print('-- UpgradeYourFactory:adjProdPoint2lvl :: prodpoint.storage.fillLevels')
-		-- DebugUtil.printTableRecursively(prodpoint.storage.fillLevels, nil, nil, 2)
-
-		-- print('-- UpgradeYourFactory:adjProdPoint2lvl :: fillLevels')
-		-- DebugUtil.printTableRecursively(fillLevels, nil, nil, 2)
-
 		prodpoint.storage.fillLevels = {}
 		for ft,capacity in pairs(prodpoint.storage.capacities) do
 			local fillTypeName = g_fillTypeManager:getFillTypeByIndex(ft).name
@@ -228,8 +274,8 @@ end
 
 ---Hook into the finalize placement, which is called when the player places a new production
 function UpgradeYourFactory.onFinalizePlacement()
-	for _,prodpoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
-		if not prodpoint.productionLevel then
+	for _, prodpoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
+		if prodpoint.isUpgradable == nil or prodpoint.productionLevel == nil or prodpoint.productionLevel < 1 then
 			UpgradeYourFactory:initializeProduction(prodpoint)
 		end
 	end
@@ -237,48 +283,81 @@ end
 
 ---Hooks into a player purchasing an existing production, adjusting the production to work with the new system
 function UpgradeYourFactory.setOwnerFarmId(prodpoint, farmId)
-	if farmId == 0 and prodpoint.productions[1].baseCyclesPerMinute then
-		prodpoint.productionLevel = 1
-		UpgradeYourFactory:adjProdPoint2lvl(prodpoint, 1)
-	end
+    if prodpoint == nil or prodpoint.productions == nil then
+        return
+    end
+
+    if farmId == 0 then
+        if prodpoint.productions[1].baseCyclesPerMinute then
+            prodpoint.productionLevel = 1
+            UpgradeYourFactory:adjProdPoint2lvl(prodpoint, 1)
+        end
+        return
+    end
+
+    if farmId > 0 and prodpoint.isUpgradable then
+        local lvl = prodpoint.productionLevel or 1
+        prodpoint.name = string.format("%d - %s", lvl, prodpoint.baseName)
+    end
 end
 
 ---Console command to set the max level
-function UpgradeYourFactory:updateml(arg)
+function UpgradeYourFactory:updateMaxLevel(arg)
 	if not arg then
 		print("uyfMaxLevel <max_level>")
 		return
 	end
-
-	local n = tonumber(arg)
-	if not n then
+	
+	local newLevel = tonumber(arg)
+	if not newLevel then
 		print("uyfMaxLevel <max_level>")
 		print("<max_level> must be a number")
 		return
-	elseif n < 1 or n > 99 then
+	elseif newLevel < 1 or newLevel > 99 then
 		print("uyfMaxLevel <max_level>")
 		print("<max_level> must be between 1 and 99")
 		return
 	end
-
+	
 	-- set the max level into local var
-	self.MAX_LEVEL = n
+	self.MAX_LEVEL = newLevel
+	if g_currentMission and g_currentMission.uyf then
+		g_currentMission.uyf.maxLevel = newLevel
+	end
 
 	-- re-initialize the loaded productions based on the current max level
 	self:forceMaxLevel()
-
-	UFInfo("Production maximum level has been updated to level "..n, "")
+	
+	UYFInfo("Global MaxLevel updated to: %d", newLevel)
+	
+	if g_server ~= nil then
+		g_server:broadcastEvent(SyncMaxLevelEvent.new(newLevel), true)
+	end	
 end
 
----Handle if the loaded productions are somehow over the maxLevel
-function UpgradeYourFactory:forceMaxLevel()
-	if #self.loadedProductions > 0 then
-		for _,p in ipairs(self.loadedProductions) do
-			if p.level > self.MAX_LEVEL then
-				p.level = self.MAX_LEVEL
-			end
+---Console command to set the max level
+function UpgradeYourFactory:updateSortByLevel(arg)
+	local newValue = not self.SORT_BY_LEVEL
+	
+	-- set the max level into local var
+	self.SORT_BY_LEVEL = newValue
+
+	if g_currentMission and g_currentMission.uyf then
+		g_currentMission.uyf.sortByLevel = newValue
+	end
+
+	-- re-initialize the loaded productions based on the current max level
+	for _, prodpoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
+		if prodpoint.isUpgradable ~= nil and prodpoint.productionLevel ~= nil then
+			prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, prodpoint.productionLevel, prodpoint)
 		end
 	end
+
+	UYFInfo("Sorting by level has been turned %s", newValue and "on" or "off")
+
+	if g_server ~= nil then
+		g_server:broadcastEvent(SyncSortByLevelEvent.new(newValue), true)
+	end	
 end
 
 function UpgradeYourFactory.saveToXML()
@@ -289,38 +368,45 @@ function UpgradeYourFactory.saveToXML()
 
 	local xmlFile = XMLFile.create("UpgradeYourFactoryXML", xmlFilename, "UpgradeYourFactory")
 	xmlFile:setInt("UpgradeYourFactory#maxLevel", UpgradeYourFactory.MAX_LEVEL)
+	xmlFile:setBool("UpgradeYourFactory#sortByLevel", UpgradeYourFactory.SORT_BY_LEVEL or true)
 
 	-- check if player has owned production installed
-	if #g_currentMission.productionChainManager.farmIds > 0 then	
-		local prodpoints = g_currentMission.productionChainManager.farmIds[1].productionPoints
+	if g_currentMission.productionChainManager.farmIds ~= nil then
 		local pCounter = 0
-		for _,prodpoint in ipairs(prodpoints) do
-			if prodpoint.isUpgradable then
-				local key = string.format("UpgradeYourFactory.production(%d)", pCounter)
-				xmlFile:setInt(key .. "#level", prodpoint.productionLevel)
+		local skipped = 0
 
-				local key2 = key .. ".position"
+		for farmId, farmData in pairs(g_currentMission.productionChainManager.farmIds) do
+			local farm = g_farmManager:getFarmById(farmId)
+			if farm == nil then
+				skipped = skipped + 1
+			else
+				for _, prodpoint in ipairs(farmData.productionPoints) do
+					if prodpoint.isUpgradable then
+						local key = string.format("UpgradeYourFactory.production(%d)", pCounter)
+						xmlFile:setInt(key .. "#farmId", prodpoint.owningPlaceable:getOwnerFarmId() or 0)
+						xmlFile:setInt(key .. "#level", prodpoint.productionLevel)
 
-				local x, y, z = getWorldTranslation(prodpoint.owningPlaceable.rootNode)
-				xmlFile:setFloat(key2 .. "#x", x)
-				xmlFile:setFloat(key2 .. "#y", y)
-				xmlFile:setFloat(key2 .. "#z", z)
+						local key2 = key .. ".position"
 
-				local fCounter = 0
-				key2 = ""
-				for fillTypeIndex,fillLevel in pairs(prodpoint.storage.fillLevels) do
-					local ft = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
-					if ft ~= nil then
+						local x, y, z = getWorldTranslation(prodpoint.owningPlaceable.rootNode)
+						xmlFile:setFloat(key2 .. "#x", x)
+						xmlFile:setFloat(key2 .. "#y", y)
+						xmlFile:setFloat(key2 .. "#z", z)
 
-						printf('-- UpgradeYourFactory:saveXML :: name:%s fillType:%s level:%d', prodpoint.name, string.upper(ft.name), fillLevel )
-
-						key2 = key .. string.format(".fillLevels.fillLevel(%d)", fCounter)
-						xmlFile:setString(key2 .. "#fillType", string.upper(ft.name))
-						xmlFile:setInt(key2 .. "#storage", fillLevel)
-						fCounter = fCounter + 1
+						local fCounter = 0
+						key2 = ""
+						for fillTypeIndex,fillLevel in pairs(prodpoint.storage.fillLevels) do
+							local ft = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
+							if ft ~= nil then
+								key2 = key .. string.format(".fillLevels.fillLevel(%d)", fCounter)
+								xmlFile:setString(key2 .. "#fillType", string.upper(ft.name))
+								xmlFile:setInt(key2 .. "#storage", fillLevel)
+								fCounter = fCounter + 1
+							end	
+						end
+						pCounter = pCounter + 1
 					end
 				end
-				pCounter = pCounter+1
 			end
 		end
 	end
@@ -328,28 +414,27 @@ function UpgradeYourFactory.saveToXML()
 end
 
 function UpgradeYourFactory:loadXML()
-
 	if self.newSavegame then
-		print('-- UpgradeYourFactory:loadXML :: self.newSavegame')
+		UYFInfo('loadXML :: exit due to newSavegame')
 		return
 	end
 
 	local xmlFile = XMLFile.loadIfExists("UpgradeYourFactoryXML", xmlFilename)
 	if not xmlFile then
-		print('-- UpgradeYourFactory:loadXML :: not xmlFile')
+		UYFInfo('loadXML :: no xmlFile to load')
+		SyncMaxLevelEvent.new()
+		SyncSortByLevelEvent.new()
 		return
 	end
 
 	local productionCounter = 0
 	while true do
 		local key = string.format("UpgradeYourFactory.production(%d)", productionCounter)
-
-		local level = getXMLInt(xmlFile.handle, key .. "#level")
+		local level = getXMLInt(xmlFile.handle,key .. "#level")
 		if level == nil then
 			break
 		end
 
-		-- determine the capacities
 		local loadedFillLevels = {}
 		local fillLevelCounter = 0
 		while true do
@@ -373,7 +458,6 @@ function UpgradeYourFactory:loadXML()
 				fillTypeName = newFillTypeName
 				fillLevel = newStorage
 			elseif oldFillTypeId ~= nil then
-				-- old file save structure
 				fillTypeName = oldFillTypeName
 				fillLevel = oldFillLevel
 			end
@@ -383,7 +467,7 @@ function UpgradeYourFactory:loadXML()
 			end
 
 			-- counter loop for fillLevels
-			fillLevelCounter = fillLevelCounter +1
+			fillLevelCounter = fillLevelCounter + 1
 		end
 
 		-- insert once we have all the related data
@@ -391,6 +475,7 @@ function UpgradeYourFactory:loadXML()
 			self.loadedProductions,
 			{
 				level = level,
+				farmId = getXMLInt(xmlFile.handle, key .. "#farmId") or 0,
 				position = {
 					x = getXMLFloat(xmlFile.handle, key .. ".position#x"),
 					y = getXMLFloat(xmlFile.handle, key .. ".position#y"),
@@ -401,18 +486,73 @@ function UpgradeYourFactory:loadXML()
 		)
 
 		-- counter loop for productions
-		productionCounter = productionCounter +1
+		productionCounter = productionCounter + 1
 	end
 
 	local maxLevel = getXMLInt(xmlFile.handle, "UpgradeYourFactory#maxLevel")
 	if maxLevel and maxLevel > 0 and maxLevel < 100 then
 		self.MAX_LEVEL = maxLevel
+		g_currentMission.uyf.maxLevel = maxLevel
 	end
 
-	print('-- UpgradeYourFactory:loadXML :: self.loadedProductions')
-    DebugUtil.printTableRecursively(self.loadedProductions)
+	local sortByLevel = getXMLBool(xmlFile.handle, "UpgradeYourFactory#sortByLevel")
+	self.SORT_BY_LEVEL = sortByLevel
+	g_currentMission.uyf.sortByLevel = sortByLevel
+
+	if g_server ~= nil then
+		g_server:broadcastEvent(SyncMaxLevelEvent.new(g_currentMission.uyf.maxLevel), true)
+		g_server:broadcastEvent(SyncSortByLevelEvent.new(g_currentMission.uyf.sortByLevel), true)
+	end
+
+	UYFInfo('loadXML :: maxLevel: %d', g_currentMission.uyf.maxLevel)
+	UYFInfo('loadXML :: sortByLevel: %s', g_currentMission.uyf.sortByLevel and "on" or "off")
+	UYFInfo('loadXML :: loadedProductions: %d', #self.loadedProductions)
 end
+
+function UpgradeYourFactory:upgradeProduction(prodpoint)
+    if prodpoint == nil or prodpoint.owningPlaceable == nil then
+        return
+    end
+
+    local newLevel = prodpoint.productionLevel + 1
+    local event = UpgradeProductionEvent.new(prodpoint, newLevel)
+
+    if g_server ~= nil then
+        g_server:broadcastEvent(event, true)
+    else
+        g_client:getServerConnection():sendEvent(event)
+    end
+end
+
+function UpgradeYourFactory:downgradeProduction(prodpoint)
+    if prodpoint == nil or prodpoint.owningPlaceable == nil then
+        return
+    end
+
+    if prodpoint.productionLevel <= 1 then
+        return
+    end
+
+    local newLevel = prodpoint.productionLevel - 1
+    local event = UpgradeProductionEvent.new(prodpoint, newLevel)
+
+    if g_server ~= nil then
+        g_server:broadcastEvent(event, true)
+    else
+        g_client:getServerConnection():sendEvent(event)
+    end
+end
+
+---Creates a settings object which can be accessed from the UI and the rest of the code
+---@param   mission     table   @The object which is later available as g_currentMission
+local function createModSettings(mission)
+    -- Register the settings object globally so we can access it from the event class and others later
+    mission.uyfSettings = Settings.new()
+    addModEventListener(mission.uyfSettings)
+end
+Mission00.load = Utils.prependedFunction(Mission00.load, createModSettings)
 
 PlaceableProductionPoint.onFinalizePlacement = Utils.appendedFunction(PlaceableProductionPoint.onFinalizePlacement, UpgradeYourFactory.onFinalizePlacement)
 FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, UpgradeYourFactory.saveToXML)
 ProductionPoint.setOwnerFarmId = Utils.appendedFunction(ProductionPoint.setOwnerFarmId, UpgradeYourFactory.setOwnerFarmId)
+
