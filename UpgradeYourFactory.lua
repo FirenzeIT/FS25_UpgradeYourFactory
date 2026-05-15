@@ -534,7 +534,7 @@ function UpgradeYourFactory:downgradeProduction(prodpoint)
     end
 
     local newLevel = prodpoint.productionLevel - 1
-    local event = UpgradeProductionEvent.new(prodpoint, newLevel)
+    local event = UpgradeProductionEvent.new(prodpoint, newLevel, true)
 
     if g_server ~= nil then
         g_server:broadcastEvent(event, true)
