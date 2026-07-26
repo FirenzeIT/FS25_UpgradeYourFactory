@@ -13,5 +13,4 @@ Features:
 
 Additional information:
 - The following factories are excluded from the upgrade: Playground maker hall, Wagon builder (Riverbend Springs) and Piano manufacture (Zielonka)
-- By default, the maximum upgrade level is 15. This can be changed in the UpgradeYourFactory.xml file!
-- Currently, the mod does not support multiplayer mode.
+- By default, the maximum upgrade level is 15. This can be changed in the game settings, in the UpgradeYourFactory.xml file, or via the console command uyfMaxLevel!
