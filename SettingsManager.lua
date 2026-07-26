@@ -12,7 +12,7 @@ local XMLTAG = "upgradeYourFactory"
 local MOD_NAME = g_currentModName or "FS25_UpgradeYourFactory"
 
 SettingsManager.defaultConfig = {
-    maxLevel = 25,
+    maxLevel = 15,
     sortByLevel = true,
 }
 
