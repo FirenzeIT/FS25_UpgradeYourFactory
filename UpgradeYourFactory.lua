@@ -10,7 +10,10 @@ source(modDirectory .. "SyncMaxLevelEvent.lua")
 source(modDirectory .. "SyncSortByLevelEvent.lua")
 source(modDirectory .. "UpgradeProductionEvent.lua")
 source(modDirectory .. "InGameMenuUpgradeYourFactory.lua")
+source(modDirectory .. "Settings.lua")
 source(modDirectory .. "SettingsUI.lua")
+source(modDirectory .. "SettingsManager.lua")
+source(modDirectory .. "lib/UIHelper.lua")
 addModEventListener(UpgradeYourFactory)
 
 function UYFInfo(infoMessage, ...)
@@ -24,6 +27,10 @@ function UpgradeYourFactory:loadMap()
 
 	g_currentMission.uyf = g_currentMission.uyf or {}
 	g_currentMission.uyf.maxLevel = self.MAX_LEVEL
+	g_currentMission.uyf.sortByLevel = self.SORT_BY_LEVEL
+
+	self.settingsUI = SettingsUI.new()
+	self.settingsUI:injectUiSettings(g_currentMission.uyf)
 
 	InGameMenuUpgradeYourFactory:initialize()
 
@@ -31,7 +38,12 @@ function UpgradeYourFactory:loadMap()
 		xmlFilename = g_currentMission.missionInfo.savegameDirectory .. "/UpgradeYourFactory.xml"
 	end
 	self:loadXML()
-
+	
+	self.settingsManager = SettingsManager.new()
+	self.settingsManager:restoreSettings()
+	self.MAX_LEVEL = g_currentMission.uyf.maxLevel
+	self.SORT_BY_LEVEL = g_currentMission.uyf.sortByLevel
+	
 	if g_server ~= nil then
         addConsoleCommand("uyfMaxLevel", "Update UpgradeYourFactory max level", "updateMaxLevel", self)
 		addConsoleCommand("uyfToggleSortByLevel", "Toggle UpgradeYourFactory sort by level setting", "updateSortByLevel", self)
@@ -326,7 +338,7 @@ function UpgradeYourFactory:updateMaxLevel(arg)
 	end
 
 	-- re-initialize the loaded productions based on the current max level
-	self:forceMaxLevel()
+	-- self:forceMaxLevel()
 	
 	UYFInfo("Global MaxLevel updated to: %d", newLevel)
 	
@@ -337,7 +349,7 @@ end
 
 ---Console command to set the max level
 function UpgradeYourFactory:updateSortByLevel(arg)
-	local newValue = not self.SORT_BY_LEVEL
+	local newValue = type(arg) == "boolean" and arg or not self.SORT_BY_LEVEL
 	
 	-- set the max level into local var
 	self.SORT_BY_LEVEL = newValue
@@ -349,7 +361,7 @@ function UpgradeYourFactory:updateSortByLevel(arg)
 	-- re-initialize the loaded productions based on the current max level
 	for _, prodpoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
 		if prodpoint.isUpgradable ~= nil and prodpoint.productionLevel ~= nil then
-			prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, prodpoint.productionLevel, prodpoint)
+			prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, prodpoint.productionLevel, prodpoint, newValue)
 		end
 	end
 
@@ -411,6 +423,10 @@ function UpgradeYourFactory.saveToXML()
 		end
 	end
 	xmlFile:save()
+	
+	if UpgradeYourFactory.settingsManager ~= nil then
+		UpgradeYourFactory.settingsManager:saveSettings()
+	end
 end
 
 function UpgradeYourFactory:loadXML()

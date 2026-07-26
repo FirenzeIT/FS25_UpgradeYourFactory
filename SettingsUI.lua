@@ -16,6 +16,7 @@ SettingsUI = {}
 
 -- Create a meta table to get basic Class-like behavior
 local SettingsUI_mt = Class(SettingsUI)
+local MOD_NAME = g_currentModName or "FS25_UpgradeYourFactory"
 
 ---Creates the settings UI object
 ---@return SettingsUI @The new object
@@ -72,20 +73,20 @@ end
 function SettingsUI:onSettingsChange(control)
     self:updateUiElements()
 
-    -- Grab the setting and new value from the UI element
-    local setting = control.elements[1]
-    local newValue = setting.texts[setting.state]
+    -- UIHelper wcześniej zapisał już poprawną wartość number/boolean.
+    local newValue = g_currentMission.uyf[control.name]
 
-    Logging.info(MOD_NAME .. ':SETTINGSUI Update Setting: %s = %s', control.name, newValue)
-
-    -- set the new value into the mission object
-    g_currentMission.uyf[control.name] = newValue
+    Logging.info(
+        MOD_NAME .. ':SETTINGSUI Update Setting: %s = %s',
+        control.name,
+        tostring(newValue)
+    )
 
     if g_server ~= nil then
         if control.name == 'maxLevel' then
             g_server:broadcastEvent(SyncMaxLevelEvent.new(newValue), true)
-	    elseif control.name == 'sortByLevel' then
-            g_server:broadcastEvent(SyncSortByLevelEvent.new(newValue), true)
+        elseif control.name == 'sortByLevel' then
+            UpgradeYourFactory:updateSortByLevel(newValue)
         end
     end
 end
