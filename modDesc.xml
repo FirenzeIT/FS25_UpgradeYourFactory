@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<modDesc descVersion="110">
+<modDesc descVersion="111">
     <author>Lisek, GMNGJoy</author>
     <version>1.1.0.0</version>
     <contributors>Az#4971, olaf.tnt</contributors>
@@ -32,8 +32,11 @@ Changelog 1.0.1.0
 
 Changelog 1.1.0.0:
 - Added support for multiplayer mode.
+- Added level downgrade function.
 - Added in-game mod settings.
+- Added alphabetical sorting in the factory list.
 - Added Italian translation.
+- Improved sorting by level.
 
 In case of any problems with the mod, please visit GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory or contact me via Discord: lisekv1]]>
         </en>
@@ -58,8 +61,11 @@ Dziennik zmian 1.0.1.0
 
 Dziennik zmian 1.1.0.0:
 - Dodano obsługę trybu wieloosobowego.
+- Dodano funkcję obniżania poziomu.
 - Dodano ustawienia moda w grze.
+- Dodano sortowanie alfabetyczne na liście fabryk.
 - Dodano tłumaczenie na język włoski.
+- Ulepszono sortowanie według poziomu.
 
 W razie problemów z modem zapraszam na github: https://github.com/lisekv1/FS25_UpgradeYourFactory lub do kontaktu poprzez Discord: lisekv1]]>
 		</pl>
@@ -84,8 +90,11 @@ Journal des modifications 1.0.1.0
 
 Journal des modifications 1.1.0.0
 - Ajout de la prise en charge du mode multijoueur.
-- Des paramètres de mod en jeu ont été ajoutés.
+- Ajout d'une fonction de rétrogradation de niveau.
+- Ajout des paramètres de mod en jeu.
+- Ajout du tri alphabétique dans la liste des usines.
 - Traduction italienne ajoutée.
+- Tri par niveau amélioré.
 
 En cas de problème avec le mod, veuillez consulter GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory ou me contacter via Discord: lisekv1]]>
 		</fr>
@@ -110,8 +119,11 @@ Zusatzinformation:
 
 Änderungsprotokoll 1.1.0.0
 - Unterstützung für den Mehrspielermodus hinzugefügt.
+- Funktion zur Herabstufung des Levels hinzugefügt.
 - Mod-Einstellungen im Spiel hinzugefügt.
+- Alphabetische Sortierung in der Fabrikliste hinzugefügt.
 - Italienische Übersetzung hinzugefügt.
+- Verbesserte Sortierung nach Level.
 
 Bei Problemen mit der Mod besuche bitte GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory oder kontaktiere mich über Discord: lisekv1]]>
 		</de>
