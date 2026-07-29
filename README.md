@@ -1,5 +1,3 @@
-# Do not use this version
-
 # FS25_UpgradeYourFactory
 Upgrade your factories! This mod allows you to increase production speed and storage capacity, so you don’t need to place multiple identical factories.
 
