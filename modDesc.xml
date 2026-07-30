@@ -5,9 +5,10 @@
     <contributors>Az#4971, olaf.tnt</contributors>
     <title>
         <en>Upgrade Your Factory</en>
-        <pl>Ulepsz swoją fabrykę</pl>
-        <fr>Améliorez votre usine</fr>
+        <pl>Ulepsz Swoją Fabrykę</pl>
+        <fr>Améliorez Votre Usine</fr>
         <de>Verbessern Sie Ihre Fabrik</de>
+        <it>Potenzia La Tua Fabbrica</it>
     </title>
     <description>
         <en>
@@ -65,7 +66,7 @@ Dziennik zmian 1.1.0.0:
 - Ulepszono sortowanie według poziomu.
 
 W razie problemów z modem zapraszam na github: https://github.com/lisekv1/FS25_UpgradeYourFactory lub do kontaktu poprzez Discord: lisekv1]]>
-		</pl>
+        </pl>
         <fr>
 <![CDATA[Améliorez vos usines ! Ce mod vous permet d'augmenter la vitesse de production et la capacité de stockage, vous n'avez donc pas besoin de placer plusieurs usines identiques.
 
@@ -78,7 +79,7 @@ Fonctionnalités:
 - La valeur de l'usine augmente avec les améliorations, ce qui vous permet de récupérer votre investissement lors de sa vente.
 
 Informations complémentaires:
-- Les usines suivantes sont exclues de la modernisation : Playground Creation Hall, Carriage Construction (Riverbend Springs) et Piano Factory (Zielonka).
+- Les usines suivantes sont exclues de la modernisation : Playground Creation Hall, Carriage Construction (Riverbend Springs) et Piano Factory (Zielonka).
 - Par défaut, le niveau d'amélioration maximal est de 15. Cette valeur peut être modifiée dans les paramètres du jeu, dans le fichier UpgradeYourFactory.xml ou via la commande de console uyfMaxLevel!
 
 Journal des modifications 1.0.1.0
@@ -93,7 +94,7 @@ Journal des modifications 1.1.0.0
 - Tri par niveau amélioré.
 
 En cas de problème avec le mod, veuillez consulter GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory ou me contacter via Discord: lisekv1]]>
-		</fr>
+        </fr>
         <de>
 <![CDATA[Verbessere deine Fabriken! Dieser Mod ermöglicht es Ihnen, die Produktionsgeschwindigkeit und die Lagerkapazität zu erhöhen, sodass Sie nicht mehrere identische Fabriken platzieren müssen.
 
@@ -121,88 +122,128 @@ Zusatzinformation:
 - Verbesserte Sortierung nach Level.
 
 Bei Problemen mit der Mod besuche bitte GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory oder kontaktiere mich über Discord: lisekv1]]>
-		</de>
+        </de>
+        <it>
+<![CDATA[Potenzia le tue fabbriche! Questa mod ti permette di aumentare la velocità di produzione e la capacità di stoccaggio, così non dovrai piazzare più fabbriche identiche.
+
+Caratteristiche:
+- Le catene di produzione ora hanno livelli che possono essere potenziati.
+- Potenziare una fabbrica costa leggermente di più per livello rispetto alla costruzione di una nuova.
+- I costi di potenziamento sono compensati dalla maggiore velocità di produzione.
+- Una maggiore velocità di produzione si traduce in una maggiore capacità di stoccaggio.
+- Poiché non è necessario costruire una nuova fabbrica, risparmi sui costi di produzione.
+- Il valore della fabbrica aumenta con i potenziamenti, permettendoti di recuperare l'investimento al momento della vendita.
+
+Informazioni aggiuntive:
+- Le seguenti fabbriche sono escluse dal potenziamento: Fabbrica di parchi giochi, Costruttore di carri (Riverbend Springs) e Fabbrica di pianoforti (Zielonka)
+- Per impostazione predefinita, il livello massimo di potenziamento è 15. Questo valore può essere modificato nelle impostazioni di gioco, nel file UpgradeYourFactory.xml o tramite il comando della console uyfMaxLevel!
+
+Changelog 1.0.1.0
+- Aggiornati i dati di salvataggio memorizzati per maggiore flessibilità e compatibilità con altre mod.
+- Aggiunta la funzione per adattare la velocità di scarico della stazione di carico in base al livello di potenziamento.
+
+Changelog 1.1.0.0:
+- Aggiunto il supporto per la modalità multigiocatore.
+- Aggiunta la funzione di riduzione livello.
+- Aggiunte le impostazioni della mod all'interno del gioco.
+- Aggiunto l'ordinamento alfabetico nell'elenco delle fabbriche.
+- Potenziato l'ordinamento per livello.
+
+In caso di problemi con la mod, visita GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory o contattami su Discord: lisekv1]]>
+        </it>
     </description>
     <iconFilename>icon_UpgYourFactory.dds</iconFilename>
     <multiplayer supported="true"/>
     <extraSourceFiles>
         <sourceFile filename="UpgradeYourFactory.lua"/>
     </extraSourceFiles>
-	<dependencies>
-		<dependency>FS25_additionalGameSettings</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>FS25_additionalGameSettings</dependency>
+    </dependencies>
     <l10n>
-		<text name="UpgradeYourFactory">
+        <text name="UpgradeYourFactory">
             <en>Upgrade Your Factory</en>
             <pl>Ulepsz swoją fabrykę</pl>
             <fr>Améliorez votre usine</fr>
             <de>Verbessern Sie Ihre Fabrik</de>
+            <it>Potenzia la tua fabbrica</it>
         </text>
         <text name="uyf_upgrade">
             <en>Upgrade</en>
             <pl>Ulepsz</pl>
             <fr>Améliorer</fr>
             <de>Upgrade</de>
+            <it>Potenzia</it>
         </text>
-		<text name="uyf_downgrade">
-			<en>Downgrade</en>
-			<pl>Obniż poziom</pl>
-			<fr>Rétrograder</fr>
-			<de>Herabstufen</de>
-		</text>
+        <text name="uyf_downgrade">
+            <en>Downgrade</en>
+            <pl>Obniż poziom</pl>
+            <fr>Rétrograder</fr>
+            <de>Herabstufen</de>
+            <it>Riduci livello</it>
+        </text>
         <text name="uyf_upgrade_dialog">
             <en>Upgrade %s to level %d for %s?</en>
             <pl>Ulepszyć %s do poziomu %d za %s?</pl>
             <fr>Améliorer %s au niveau %s pour %s</fr>
             <de>Upgrade %s auf Stufe %d (%s)</de>
+            <it>Potenziare %s al livello %d per %s?</it>
         </text>
-		<text name="uyf_downgrade_dialog">
+        <text name="uyf_downgrade_dialog">
             <en>Downgrade %s to level %d?</en>
             <pl>Obniżyć poziom %s do poziomu %d?</pl>
             <fr>Rétrograder %s au niveau %d ?</fr>
             <de>%s auf Stufe %d herabstufen?</de>
+            <it>Ridurre %s al livello %d?</it>
         </text>
         <text name="uyf_max_level">
             <en>Your production is already at maximum level.</en>
             <pl>Twoja produkcja jest już na maksymalnym poziomie.</pl>
             <fr>Votre usine est déjà au niveau maximum</fr>
             <de>Ihre Produktion ist bereits auf dem Höchststand.</de>
+            <it>La tua produzione è già al livello massimo.</it>
         </text>
         <text name="uyf_upgrade_factory">
             <en>Upgrade Factory</en>
             <pl>Ulepsz fabrykę</pl>
             <fr>Améliorer l'usine</fr>
             <de>Verbesserung die Fabrik</de>
+            <it>Potenzia Fabbrica</it>
         </text>
-		<text name="uyf_downgrade_factory">
+        <text name="uyf_downgrade_factory">
             <en>Downgrade Factory</en>
             <pl>Obniż poziom fabryki</pl>
             <fr>Rétrograder l'usine</fr>
             <de>Fabrik herabstufen</de>
+            <it>Riduci livello Fabbrica</it>
         </text>
-	    <text name="uyf_maxLevel_short">
-			<en>Maximum Level</en>
-			<pl>Maksymalny poziom</pl>
-		    <fr>Niveau maximal</fr>
-			<de>Maximale Stufe</de>
-		</text>
-	    <text name="uyf_sortByLevel_short">
-			<en>Sort By Level</en>
-			<pl>Sortuj wg. poziomu</pl>
-			<fr>Trier par niveau</fr>
-			<de>Nach Stufe sortieren</de>
-		</text>
-	    <text name="uyf_maxLevel_long">
-			<en>Sets the highest level to which a factory can be upgraded.</en>
-			<pl>Ustawia najwyższy poziom, do którego można ulepszyć fabrykę.</pl>
-		    <fr>Définit le niveau maximal auquel une usine peut être améliorée.</fr>
-			<de>Legt die höchste Stufe fest, auf die eine Fabrik ausgebaut werden kann.</de>
-		</text>
-	    <text name="uyf_sortByLevel_long">
-			<en>Sorts the production list by factory level instead of alphabetically.</en>
-			<pl>Sortuje listę produkcji według poziomu fabryki zamiast alfabetycznie.</pl>
-		    <fr>Trie la liste des productions par niveau d'usine au lieu de l'ordre alphabétique.</fr>
-			<de>Sortiert die Produktionsliste nach Fabrikstufe statt alphabetisch.</de>
-		</text>
+        <text name="uyf_maxLevel_short">
+            <en>Maximum Level</en>
+            <pl>Maksymalny poziom</pl>
+            <fr>Niveau maximal</fr>
+            <de>Maximale Stufe</de>
+            <it>Livello Massimo</it>
+        </text>
+        <text name="uyf_sortByLevel_short">
+            <en>Sort By Level</en>
+            <pl>Sortuj wg. poziomu</pl>
+            <fr>Trier par niveau</fr>
+            <de>Nach Stufe sortieren</de>
+            <it>Ordina per Livello</it>
+        </text>
+        <text name="uyf_maxLevel_long">
+            <en>Sets the highest level to which a factory can be upgraded.</en>
+            <pl>Ustawia najwyższy poziom, do którego można ulepszyć fabrykę.</pl>
+            <fr>Définit le niveau maximal auquel une usine peut être améliorée.</fr>
+            <de>Legt die höchste Stufe fest, auf die eine Fabrik ausgebaut werden kann.</de>
+            <it>Imposta il livello massimo al quale una fabbrica può essere potenziata.</it>
+        </text>
+        <text name="uyf_sortByLevel_long">
+            <en>Sorts the production list by factory level instead of alphabetically.</en>
+            <pl>Sortuje listę produkcji według poziomu fabryki zamiast alfabetycznie.</pl>
+            <fr>Trie la liste des productions par niveau d'usine au lieu de l'ordre alphabétique.</fr>
+            <de>Sortiert die Produktionsliste nach Fabrikstufe statt alphabetisch.</de>
+            <it>Ordina l'elenco delle produzioni in base al livello della fabbrica anziché alfabeticamente.</it>
+        </text>
     </l10n>
 </modDesc>
