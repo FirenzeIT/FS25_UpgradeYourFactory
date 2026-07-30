@@ -8,7 +8,6 @@
         <pl>Ulepsz swoją fabrykę</pl>
         <fr>Améliorez votre usine</fr>
         <de>Verbessern Sie Ihre Fabrik</de>
-		<it>Potenzia la Tua Fabbrica</it>
     </title>
     <description>
         <en>
@@ -35,7 +34,6 @@ Changelog 1.1.0.0:
 - Added level downgrade function.
 - Added in-game mod settings.
 - Added alphabetical sorting in the factory list.
-- Added Italian translation (by: FirenzeIT).
 - Improved sorting by level.
 
 In case of any problems with the mod, please visit GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory or contact me via Discord: lisekv1]]>
@@ -64,7 +62,6 @@ Dziennik zmian 1.1.0.0:
 - Dodano funkcję obniżania poziomu.
 - Dodano ustawienia moda w grze.
 - Dodano sortowanie alfabetyczne na liście fabryk.
-- Dodano tłumaczenie na język włoski (autor: FirenzeIT).
 - Ulepszono sortowanie według poziomu.
 
 W razie problemów z modem zapraszam na github: https://github.com/lisekv1/FS25_UpgradeYourFactory lub do kontaktu poprzez Discord: lisekv1]]>
@@ -93,7 +90,6 @@ Journal des modifications 1.1.0.0
 - Ajout d'une fonction de rétrogradation de niveau.
 - Ajout des paramètres de mod en jeu.
 - Ajout du tri alphabétique dans la liste des usines.
-- Traduction italienne ajoutée (par: FirenzeIT).
 - Tri par niveau amélioré.
 
 En cas de problème avec le mod, veuillez consulter GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory ou me contacter via Discord: lisekv1]]>
@@ -122,7 +118,6 @@ Zusatzinformation:
 - Funktion zur Herabstufung des Levels hinzugefügt.
 - Mod-Einstellungen im Spiel hinzugefügt.
 - Alphabetische Sortierung in der Fabrikliste hinzugefügt.
-- Italienische Übersetzung hinzugefügt (von: FirenzeIT).
 - Verbesserte Sortierung nach Level.
 
 Bei Problemen mit der Mod besuche bitte GitHub: https://github.com/lisekv1/FS25_UpgradeYourFactory oder kontaktiere mich über Discord: lisekv1]]>
@@ -142,56 +137,48 @@ Bei Problemen mit der Mod besuche bitte GitHub: https://github.com/lisekv1/FS25_
             <pl>Ulepsz swoją fabrykę</pl>
             <fr>Améliorez votre usine</fr>
             <de>Verbessern Sie Ihre Fabrik</de>
-			<it>Potenzia la Tua Fabbrica</it>
         </text>
         <text name="uyf_upgrade">
             <en>Upgrade</en>
             <pl>Ulepsz</pl>
             <fr>Améliorer</fr>
             <de>Upgrade</de>
-			<it>Migliora</it>
         </text>
 		<text name="uyf_downgrade">
 			<en>Downgrade</en>
 			<pl>Obniż poziom</pl>
 			<fr>Rétrograder</fr>
 			<de>Herabstufen</de>
-			<it>Declassa</it>
 		</text>
         <text name="uyf_upgrade_dialog">
             <en>Upgrade %s to level %d for %s?</en>
             <pl>Ulepszyć %s do poziomu %d za %s?</pl>
             <fr>Améliorer %s au niveau %s pour %s</fr>
             <de>Upgrade %s auf Stufe %d (%s)</de>
-			<it>Migliorare %s al livello %d per %s?</it>
         </text>
 		<text name="uyf_downgrade_dialog">
             <en>Downgrade %s to level %d?</en>
             <pl>Obniżyć poziom %s do poziomu %d?</pl>
             <fr>Rétrograder %s au niveau %d ?</fr>
             <de>%s auf Stufe %d herabstufen?</de>
-			<it>Declassare %s al livello %d?</it>
         </text>
         <text name="uyf_max_level">
             <en>Your production is already at maximum level.</en>
             <pl>Twoja produkcja jest już na maksymalnym poziomie.</pl>
             <fr>Votre usine est déjà au niveau maximum</fr>
             <de>Ihre Produktion ist bereits auf dem Höchststand.</de>
-			<it>La tua produzione è già al livello massimo.</it>
         </text>
         <text name="uyf_upgrade_factory">
             <en>Upgrade Factory</en>
             <pl>Ulepsz fabrykę</pl>
             <fr>Améliorer l'usine</fr>
             <de>Verbesserung die Fabrik</de>
-			<it>Migliora la Fabbrica</it>
         </text>
 		<text name="uyf_downgrade_factory">
             <en>Downgrade Factory</en>
             <pl>Obniż poziom fabryki</pl>
             <fr>Rétrograder l'usine</fr>
             <de>Fabrik herabstufen</de>
-			<it>Declassa la Fabbrica</it>
         </text>
 	    <text name="uyf_maxLevel_short">
 			<en>Maximum Level</en>
