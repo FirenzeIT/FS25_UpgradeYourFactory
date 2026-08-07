@@ -58,6 +58,7 @@ end
 
 ---Hooks into the ModEventListener:onSavegameLoaded() function
 function UpgradeYourFactory:onSavegameLoaded()
+	UpgradeYourFactory.onFinalizePlacement()
     self:initializeLoadedProductions()
 	UYFInfo("Global MaxLevel currently set to: "..self.MAX_LEVEL)
 end
@@ -241,6 +242,16 @@ end
 
 function UpgradeYourFactory:initializeProduction(prodpoint)
 	if not prodpoint.isUpgradable then
+		if (prodpoint.owningPlaceable.price or 0) <= 1 and prodpoint.owningPlaceable.storeItem ~= nil and prodpoint.owningPlaceable.storeItem.price > 1 then
+			prodpoint.owningPlaceable.price = prodpoint.owningPlaceable.storeItem.price
+		end
+
+		if (prodpoint.owningPlaceable.price or 0) <= 1 then
+			prodpoint.isUpgradable = false
+			UYFInfo("Production Point '%s' has no valid price and cannot be upgraded.", prodpoint:getName())
+			return
+		end
+		
 		prodpoint.isUpgradable = true
 		prodpoint.productionLevel = 1
 
@@ -438,8 +449,8 @@ function UpgradeYourFactory:loadXML()
 	local xmlFile = XMLFile.loadIfExists("UpgradeYourFactoryXML", xmlFilename)
 	if not xmlFile then
 		UYFInfo('loadXML :: no xmlFile to load')
-		SyncMaxLevelEvent.new()
-		SyncSortByLevelEvent.new()
+		-- SyncMaxLevelEvent.new()
+		-- SyncSortByLevelEvent.new()
 		return
 	end
 

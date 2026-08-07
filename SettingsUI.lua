@@ -82,13 +82,20 @@ function SettingsUI:onSettingsChange(control)
         tostring(newValue)
     )
 
-    if g_server ~= nil then
-        if control.name == 'maxLevel' then
-            g_server:broadcastEvent(SyncMaxLevelEvent.new(newValue), true)
-        elseif control.name == 'sortByLevel' then
-            UpgradeYourFactory:updateSortByLevel(newValue)
-        end
-    end
+    if control.name == 'maxLevel' then
+		if g_server ~= nil then
+			UpgradeYourFactory:updateMaxLevel(newValue)
+		elseif g_client ~= nil then
+			g_client:getServerConnection():sendEvent(SyncMaxLevelEvent.new(newValue))
+		end
+
+	elseif control.name == 'sortByLevel' then
+		if g_server ~= nil then
+			UpgradeYourFactory:updateSortByLevel(newValue)
+		elseif g_client ~= nil then
+			g_client:getServerConnection():sendEvent(SyncSortByLevelEvent.new(newValue))
+		end
+	end
 end
 
 ---Updates the UI elements to reflect the current settings

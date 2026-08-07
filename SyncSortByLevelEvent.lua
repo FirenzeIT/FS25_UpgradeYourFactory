@@ -9,9 +9,12 @@ end
 
 function SyncSortByLevelEvent.new(sortByLevel)
     local self = SyncSortByLevelEvent.emptyNew()
-    self.sortByLevel = sortByLevel or true
-
-    self:initializeListeners()
+    if sortByLevel == nil then
+        sortByLevel = true
+    end
+	
+	self.sortByLevel = sortByLevel
+    -- self:initializeListeners()
 
     UYFInfo("SyncSortByLevelEvent: new")
     return self
@@ -22,17 +25,7 @@ function SyncSortByLevelEvent:readStream(streamId, connection)
 
     UYFInfo("SyncSortByLevelEvent: readStream %s", self.sortByLevel)
 
-    if g_client ~= nil then
-        if g_currentMission ~= nil and g_currentMission.uyf ~= nil then
-            UYFInfo("SyncSortByLevelEvent: overwriteSortByLevel %s", self.sortByLevel)
-            g_currentMission.uyf.sortByLevel = self.sortByLevel
-        end
-    end
-
-    if g_server ~= nil then
-        UYFInfo("SyncSortByLevelEvent: broadcastEvent %s", self.sortByLevel)
-        g_server:broadcastEvent(SyncSortByLevelEvent.new(self.sortByLevel), nil, connection)
-    end
+    UpgradeYourFactory:updateSortByLevel(self.sortByLevel)
 end
 
 function SyncSortByLevelEvent:writeStream(streamId, connection)
@@ -40,15 +33,15 @@ function SyncSortByLevelEvent:writeStream(streamId, connection)
     UYFInfo("SyncSortByLevelEvent: writeStream %s", self.sortByLevel)
 end
 
-function SyncSortByLevelEvent:initializeListeners()
-    UYFInfo("SyncSortByLevelEvent :: initializeListeners")
-    local sortByLevelEvent = self
+-- function SyncSortByLevelEvent:initializeListeners()
+    -- UYFInfo("SyncSortByLevelEvent :: initializeListeners")
+    -- local sortByLevelEvent = self
 
-    Player.readStream = Utils.appendedFunction(Player.readStream, function(player, streamId, connection)
-        sortByLevelEvent:readStream(streamId, connection)
-    end)
+    -- Player.readStream = Utils.appendedFunction(Player.readStream, function(player, streamId, connection)
+        -- sortByLevelEvent:readStream(streamId, connection)
+    -- end)
 
-    Player.writeStream = Utils.appendedFunction(Player.writeStream, function(player, streamId, connection)
-        sortByLevelEvent:writeStream(streamId, connection)
-    end)
-end
+    -- Player.writeStream = Utils.appendedFunction(Player.writeStream, function(player, streamId, connection)
+        -- sortByLevelEvent:writeStream(streamId, connection)
+    -- end)
+-- end

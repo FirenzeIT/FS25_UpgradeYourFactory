@@ -27,6 +27,9 @@ end
 
 function InGameMenuUpgradeYourFactory:onButtonUpgrade()
     local _, prodpoint = self.pageProduction:getSelectedProduction()
+	if prodpoint == nil or prodpoint.isUpgradable ~= true or prodpoint.productionLevel == nil or prodpoint.owningPlaceable == nil or prodpoint.owningPlaceable.upgradePrice == nil then
+		return
+	end
 	local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
     local money = g_farmManager:getFarmById(g_currentMission:getFarmId()):getBalance()
 
@@ -85,6 +88,9 @@ end
 
 function InGameMenuUpgradeYourFactory:onButtonDowngrade()
     local _, prodpoint = self.pageProduction:getSelectedProduction()
+	if prodpoint == nil or prodpoint.isUpgradable ~= true or prodpoint.productionLevel == nil or prodpoint.owningPlaceable == nil then
+		return
+	end
     local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
 
     local hasPermission = false
@@ -154,6 +160,10 @@ function InGameMenuUpgradeYourFactory.updateMenuButtons(pageProduction)
     if prodpoint == nil or prodpoint.owningPlaceable == nil then
         return
     end
+	
+	if prodpoint.isUpgradable ~= true or prodpoint.productionLevel == nil or prodpoint.owningPlaceable.upgradePrice == nil then
+		return
+	end
 
     if prodpoint.owningPlaceable.xmlFile ~= nil then
         local xmlName = prodpoint.owningPlaceable.xmlFile.filename

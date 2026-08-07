@@ -170,14 +170,17 @@ function UpgradeProductionEvent:runDowngrade(connection)
     end
 
     if g_currentMission ~= nil and g_currentMission:getIsServer() then
-        local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
-        local oldLevel = prodpoint.productionLevel or 0
-        local basePrice = prodpoint.owningPlaceable.price or 0
-        local price = math.floor(basePrice + basePrice * 0.1 * (oldLevel - 1))
+		local basePrice = UpgradeYourFactory:getProductionBasePrice(prodpoint)
+		if basePrice ~= nil then
+			local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
+			local oldLevel = prodpoint.productionLevel or 0
+			local basePrice = prodpoint.owningPlaceable.price or 0
+			local price = math.floor(basePrice + basePrice * 0.1 * (oldLevel - 1))
 
-        if price > 0 then
-            g_currentMission:addMoney(price, farmId, MoneyType.SHOP_PROPERTY_BUY, true, true)
-        end
+			if price > 0 then
+				g_currentMission:addMoney(price, farmId, MoneyType.SHOP_PROPERTY_BUY, true, true)
+			end
+		end
     end
 
     if prodpoint ~= nil then
@@ -225,17 +228,41 @@ function ProductionPoint:writeStream(streamId, connection)
 end
 
 -- Hook into basegame ProductionPoint.readStream event.
-local ProductionPoint_readStream = ProductionPoint.readStream
-function ProductionPoint:readStream(streamId, connection)
-    ProductionPoint_readStream(self, streamId, connection)
-    local lvl = streamReadInt8(streamId)
-    UYFInfo("ProductionPoint :: readStream '%s' with level %d", self.name, lvl)
+-- local ProductionPoint_readStream = ProductionPoint.readStream
+-- function ProductionPoint:readStream(streamId, connection)
+    -- ProductionPoint_readStream(self, streamId, connection)
+    -- local lvl = streamReadInt8(streamId)
+    -- UYFInfo("ProductionPoint :: readStream '%s' with level %d", self.name, lvl)
 
-    -- addon for UpgradeYourFactory to adjust the productionPoint.
-    if lvl ~= nil and lvl >= 1 then
-        self.productionLevel = lvl
-        if UpgradeYourFactory and UpgradeYourFactory.adjProdPoint2lvl then
-            UpgradeYourFactory:adjProdPoint2lvl(self, lvl)
-        end
-    end
+    -- -- addon for UpgradeYourFactory to adjust the productionPoint.
+    -- if lvl ~= nil and lvl >= 1 then
+        -- self.productionLevel = lvl
+        -- if UpgradeYourFactory and UpgradeYourFactory.adjProdPoint2lvl then
+            -- UpgradeYourFactory:adjProdPoint2lvl(self, lvl)
+        -- end
+    -- end
+-- end
+
+local ProductionPoint_readStream = ProductionPoint.readStream
+
+function ProductionPoint:readStream(streamId, connection)
+	ProductionPoint_readStream(self, streamId, connection)
+
+	local lvl = streamReadInt8(streamId)
+
+	UYFInfo("ProductionPoint :: readStream '%s' with level %d", tostring(self.name), lvl)
+
+	if lvl ~= nil and lvl >= 1 then
+		if self.isUpgradable == nil and UpgradeYourFactory ~= nil and UpgradeYourFactory.initializeProduction ~= nil then
+			UpgradeYourFactory:initializeProduction(self)
+		end
+
+		if self.isUpgradable == true then
+			self.productionLevel = lvl
+
+			if UpgradeYourFactory.adjProdPoint2lvl ~= nil then
+				UpgradeYourFactory:adjProdPoint2lvl(self, lvl)
+			end
+		end
+	end
 end
