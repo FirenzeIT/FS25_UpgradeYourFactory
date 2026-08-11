@@ -98,6 +98,19 @@ function UpgradeProductionEvent:runUpgrade(connection)
     end
 
     if g_currentMission ~= nil and g_currentMission:getIsServer() then
+		 if prodpoint == nil then
+			return
+		end
+		
+		local maxLevel = g_currentMission.uyf and g_currentMission.uyf.maxLevel or UpgradeYourFactory.MAX_LEVEL
+
+		if prodpoint.productionLevel >= maxLevel then
+			UYFInfo("UpgradeProductionEvent :: max level reached (%d/%d)", prodpoint.productionLevel, maxLevel)
+			return
+		end
+		
+		self.newLevel = prodpoint.productionLevel + 1
+		
         local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
         local price = prodpoint.owningPlaceable.upgradePrice or 0
 
