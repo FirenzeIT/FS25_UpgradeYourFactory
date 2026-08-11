@@ -169,19 +169,16 @@ function UpgradeProductionEvent:runDowngrade(connection)
         end
     end
 
-    if g_currentMission ~= nil and g_currentMission:getIsServer() then
-		local basePrice = UpgradeYourFactory:getProductionBasePrice(prodpoint)
-		if basePrice ~= nil then
-			local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
-			local oldLevel = prodpoint.productionLevel or 0
-			local basePrice = prodpoint.owningPlaceable.price or 0
-			local price = math.floor(basePrice + basePrice * 0.1 * (oldLevel - 1))
+    if g_currentMission ~= nil and g_currentMission:getIsServer() and prodpoint ~= nil then
+		local farmId = prodpoint.owningPlaceable:getOwnerFarmId()
+		local oldLevel = prodpoint.productionLevel or 0
+		local basePrice = prodpoint.owningPlaceable.price or 0
+		local price = math.floor(basePrice + basePrice * 0.1 * (oldLevel - 1))
 
-			if price > 0 then
-				g_currentMission:addMoney(price, farmId, MoneyType.SHOP_PROPERTY_BUY, true, true)
-			end
+		if price > 0 then
+			g_currentMission:addMoney(price, farmId, MoneyType.SHOP_PROPERTY_BUY, true, true)
 		end
-    end
+	end
 
     if prodpoint ~= nil then
         local oldLevel = prodpoint.productionLevel or 0
