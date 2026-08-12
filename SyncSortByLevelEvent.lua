@@ -16,21 +16,21 @@ function SyncSortByLevelEvent.new(sortByLevel)
 	self.sortByLevel = sortByLevel
     -- self:initializeListeners()
 
-    UYFInfo("SyncSortByLevelEvent: new")
+    -- UYFInfo("SyncSortByLevelEvent: new")
     return self
 end
 
 function SyncSortByLevelEvent:readStream(streamId, connection)
     self.sortByLevel = streamReadBool(streamId)
 
-    UYFInfo("SyncSortByLevelEvent: readStream %s", self.sortByLevel)
+    -- UYFInfo("SyncSortByLevelEvent: readStream %s", self.sortByLevel)
 
     UpgradeYourFactory:updateSortByLevel(self.sortByLevel)
 end
 
 function SyncSortByLevelEvent:writeStream(streamId, connection)
     streamWriteBool(streamId, self.sortByLevel)
-    UYFInfo("SyncSortByLevelEvent: writeStream %s", self.sortByLevel)
+    -- UYFInfo("SyncSortByLevelEvent: writeStream %s", self.sortByLevel)
 end
 
 -- function SyncSortByLevelEvent:initializeListeners()

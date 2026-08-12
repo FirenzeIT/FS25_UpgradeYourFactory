@@ -18,7 +18,7 @@ function UpgradeProductionEvent.new(prodpoint, newLevel, isDowngrade)
     self.newLevel = newLevel
     self.isDowngrade = isDowngrade == true
 
-    UYFInfo("UpgradeProductionEvent :: new '%s'", self.baseName)
+    -- UYFInfo("UpgradeProductionEvent :: new '%s'", self.baseName)
     -- self:initializeListeners()
 
     return self
@@ -32,7 +32,7 @@ function UpgradeProductionEvent:writeStream(streamId, connection)
     streamWriteString(streamId, self.baseName or "")
     streamWriteInt8(streamId, self.newLevel or 1)
     streamWriteBool(streamId, self.isDowngrade == true)
-    UYFInfo("UpgradeProductionEvent :: writeStream '%s'", self.baseName)
+    -- UYFInfo("UpgradeProductionEvent :: writeStream '%s'", self.baseName)
 end
 
 function UpgradeProductionEvent:readStream(streamId, connection)
@@ -44,7 +44,7 @@ function UpgradeProductionEvent:readStream(streamId, connection)
     self.newLevel = streamReadInt8(streamId)
     self.isDowngrade = streamReadBool(streamId)
 
-    UYFInfo("UpgradeProductionEvent :: readStream '%s'", self.baseName)
+    -- UYFInfo("UpgradeProductionEvent :: readStream '%s'", self.baseName)
     self:run(connection)
 end
 
@@ -105,7 +105,7 @@ function UpgradeProductionEvent:runUpgrade(connection)
 		local maxLevel = g_currentMission.uyf and g_currentMission.uyf.maxLevel or UpgradeYourFactory.MAX_LEVEL
 
 		if prodpoint.productionLevel >= maxLevel then
-			UYFInfo("UpgradeProductionEvent :: max level reached (%d/%d)", prodpoint.productionLevel, maxLevel)
+			-- UYFInfo("UpgradeProductionEvent :: max level reached (%d/%d)", prodpoint.productionLevel, maxLevel)
 			return
 		end
 		
@@ -138,7 +138,7 @@ function UpgradeProductionEvent:runUpgrade(connection)
 	if g_server ~= nil then
 		g_server:broadcastEvent(self, false)
 	end
-    UYFInfo("UpgradeProductionEvent :: run complete")
+    -- UYFInfo("UpgradeProductionEvent :: run complete")
 end
 
 function UpgradeProductionEvent:runDowngrade(connection)
@@ -212,11 +212,11 @@ function UpgradeProductionEvent:runDowngrade(connection)
 	if g_server ~= nil then
 		g_server:broadcastEvent(self, false)
 	end
-    UYFInfo("UpgradeProductionEvent :: run complete")
+    -- UYFInfo("UpgradeProductionEvent :: run complete")
 end
 
 function UpgradeProductionEvent:initializeListeners()
-    UYFInfo("UpgradeProductionEvent :: initializeListeners")
+    -- UYFInfo("UpgradeProductionEvent :: initializeListeners")
     local settings = self
 
     Player.readStream = Utils.appendedFunction(Player.readStream, function(player, streamId, connection)
@@ -234,7 +234,7 @@ local ProductionPoint_writeStream = ProductionPoint.writeStream
 function ProductionPoint:writeStream(streamId, connection)
     ProductionPoint_writeStream(self, streamId, connection)
     streamWriteInt8(streamId, self.productionLevel or 0)
-    UYFInfo("ProductionPoint :: writeStream '%s'", self.name)
+    -- UYFInfo("ProductionPoint :: writeStream '%s'", self.name)
 end
 
 -- Hook into basegame ProductionPoint.readStream event.
@@ -260,7 +260,7 @@ function ProductionPoint:readStream(streamId, connection)
 
 	local lvl = streamReadInt8(streamId)
 
-	UYFInfo("ProductionPoint :: readStream '%s' with level %d", tostring(self.name), lvl)
+	-- UYFInfo("ProductionPoint :: readStream '%s' with level %d", tostring(self.name), lvl)
 
 	if lvl ~= nil and lvl >= 1 then
 		if self.isUpgradable == nil and UpgradeYourFactory ~= nil and UpgradeYourFactory.initializeProduction ~= nil then

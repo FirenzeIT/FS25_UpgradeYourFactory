@@ -60,7 +60,7 @@ end
 function UpgradeYourFactory:onSavegameLoaded()
 	UpgradeYourFactory.onFinalizePlacement()
     self:initializeLoadedProductions()
-	UYFInfo("Global MaxLevel currently set to: "..self.MAX_LEVEL)
+	-- UYFInfo("Global MaxLevel currently set to: "..self.MAX_LEVEL)
 end
 
 ---Local helper function to get the production point based on it's placeable position on the map
@@ -152,7 +152,7 @@ end
 
 ---Update the production point based on the chosen level
 function UpgradeYourFactory:adjProdPoint2lvl(prodpoint, lvl)
-	UYFInfo("Adjust Production Point '%s' to level %d.", prodpoint.name, lvl)
+	-- UYFInfo("Adjust Production Point '%s' to level %d.", prodpoint.name, lvl)
 
 	-- update the name with the level
 	prodpoint.name = prodPointNameWithLevel(prodpoint.baseName, lvl, prodpoint, self.SORT_BY_LEVEL)
@@ -186,9 +186,9 @@ function UpgradeYourFactory:adjProdPoint2lvl(prodpoint, lvl)
 
 			local newFillLitersPerMS = getDischargeSpeedAtLvl(oldFillLitersPerMS, lvl)
 			prodpoint.loadingStation.loadTriggers[lt].fillLitersPerMS = newFillLitersPerMS
-			if oldFillLitersPerMS ~= newFillLitersPerMS then
-				UYFInfo("Updated loadingStation discharge speed for '%s' to %d liters/second.",prodpoint.name, (newFillLitersPerMS*1000) )
-			end
+			-- if oldFillLitersPerMS ~= newFillLitersPerMS then
+				-- UYFInfo("Updated loadingStation discharge speed for '%s' to %d liters/second.",prodpoint.name, (newFillLitersPerMS*1000) )
+			-- end
 		end
 	end
 
@@ -207,7 +207,7 @@ end
 
 ---Initialize all the loaded productions, gets called during the loadMap() phase
 function UpgradeYourFactory:initializeLoadedProductions()
-	UYFInfo("initializeLoadedProductions %d", #self.loadedProductions)
+	-- UYFInfo("initializeLoadedProductions %d", #self.loadedProductions)
 	if self.newSavegame or #self.loadedProductions < 1 then
 		return
 	end
@@ -248,7 +248,7 @@ function UpgradeYourFactory:initializeProduction(prodpoint)
 
 		if (prodpoint.owningPlaceable.price or 0) <= 1 then
 			prodpoint.isUpgradable = false
-			UYFInfo("Production Point '%s' has no valid price and cannot be upgraded.", prodpoint:getName())
+			-- UYFInfo("Production Point '%s' has no valid price and cannot be upgraded.", prodpoint:getName())
 			return
 		end
 		
@@ -351,7 +351,7 @@ function UpgradeYourFactory:updateMaxLevel(arg)
 	-- re-initialize the loaded productions based on the current max level
 	-- self:forceMaxLevel()
 	
-	UYFInfo("Global MaxLevel updated to: %d", newLevel)
+	-- UYFInfo("Global MaxLevel updated to: %d", newLevel)
 	
 	if g_server ~= nil then
 		g_server:broadcastEvent(SyncMaxLevelEvent.new(newLevel), true)
@@ -376,7 +376,7 @@ function UpgradeYourFactory:updateSortByLevel(arg)
 		end
 	end
 
-	UYFInfo("Sorting by level has been turned %s", newValue and "on" or "off")
+	-- UYFInfo("Sorting by level has been turned %s", newValue and "on" or "off")
 
 	if g_server ~= nil then
 		g_server:broadcastEvent(SyncSortByLevelEvent.new(newValue), true)
@@ -442,17 +442,17 @@ end
 
 function UpgradeYourFactory:loadXML()
 	if self.newSavegame then
-		UYFInfo('loadXML :: exit due to newSavegame')
+		-- UYFInfo('loadXML :: exit due to newSavegame')
 		return
 	end
 
 	local xmlFile = XMLFile.loadIfExists("UpgradeYourFactoryXML", xmlFilename)
-	if not xmlFile then
-		UYFInfo('loadXML :: no xmlFile to load')
+	-- if not xmlFile then
+		-- UYFInfo('loadXML :: no xmlFile to load')
 		-- SyncMaxLevelEvent.new()
 		-- SyncSortByLevelEvent.new()
-		return
-	end
+		-- return
+	-- end
 
 	local productionCounter = 0
 	while true do
@@ -531,9 +531,9 @@ function UpgradeYourFactory:loadXML()
 		g_server:broadcastEvent(SyncSortByLevelEvent.new(g_currentMission.uyf.sortByLevel), true)
 	end
 
-	UYFInfo('loadXML :: maxLevel: %d', g_currentMission.uyf.maxLevel)
-	UYFInfo('loadXML :: sortByLevel: %s', g_currentMission.uyf.sortByLevel and "on" or "off")
-	UYFInfo('loadXML :: loadedProductions: %d', #self.loadedProductions)
+	-- UYFInfo('loadXML :: maxLevel: %d', g_currentMission.uyf.maxLevel)
+	-- UYFInfo('loadXML :: sortByLevel: %s', g_currentMission.uyf.sortByLevel and "on" or "off")
+	-- UYFInfo('loadXML :: loadedProductions: %d', #self.loadedProductions)
 end
 
 function UpgradeYourFactory:upgradeProduction(prodpoint)

@@ -67,7 +67,7 @@ function SettingsUI:injectUiSettings(loadedConfig)
     InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsFrame.onFrameOpen, function()
         self:updateUiElements(true) -- We can skip autobind controls here since they are already registered to onFrameOpen
     end)
-    Logging.info(MOD_NAME .. ':SETTINGSUI UI Injected')
+    -- Logging.info(MOD_NAME .. ':SETTINGSUI UI Injected')
 end
 
 function SettingsUI:onSettingsChange(control)
@@ -76,11 +76,11 @@ function SettingsUI:onSettingsChange(control)
     -- UIHelper wcześniej zapisał już poprawną wartość number/boolean.
     local newValue = g_currentMission.uyf[control.name]
 
-    Logging.info(
-        MOD_NAME .. ':SETTINGSUI Update Setting: %s = %s',
-        control.name,
-        tostring(newValue)
-    )
+    -- Logging.info(
+        -- MOD_NAME .. ':SETTINGSUI Update Setting: %s = %s',
+        -- control.name,
+        -- tostring(newValue)
+    -- )
 
     if control.name == 'maxLevel' then
 		if g_server ~= nil then

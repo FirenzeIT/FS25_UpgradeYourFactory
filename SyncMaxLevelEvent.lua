@@ -10,7 +10,7 @@ end
 function SyncMaxLevelEvent.new(maxLevel)
     local self = SyncMaxLevelEvent.emptyNew()
     self.maxLevel = maxLevel or 15
-    UYFInfo("SyncMaxLevelEvent :: new %s", self.maxLevel)
+    -- UYFInfo("SyncMaxLevelEvent :: new %s", self.maxLevel)
 
     -- self:initializeListeners()
     return self
@@ -19,14 +19,14 @@ end
 function SyncMaxLevelEvent:readStream(streamId, connection)
     self.maxLevel = streamReadInt32(streamId)
 
-    UYFInfo("SyncMaxLevelEvent :: readStream %s", self.maxLevel)
+    -- UYFInfo("SyncMaxLevelEvent :: readStream %s", self.maxLevel)
 
     UpgradeYourFactory:updateMaxLevel(self.maxLevel)
 end
 
 function SyncMaxLevelEvent:writeStream(streamId, connection)
     streamWriteInt32(streamId, self.maxLevel or 15)
-    UYFInfo("SyncMaxLevelEvent :: writeStream %s", self.maxLevel)
+    -- UYFInfo("SyncMaxLevelEvent :: writeStream %s", self.maxLevel)
 end
 
 -- function SyncMaxLevelEvent:initializeListeners()

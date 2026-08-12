@@ -14,7 +14,7 @@ function Settings.new()
 
     self:initializeListeners()
 
-    Logging.info(MOD_NAME .. ":SETTINGS :: initialized")
+    -- Logging.info(MOD_NAME .. ":SETTINGS :: initialized")
     return self
 end
 
@@ -87,7 +87,7 @@ function Settings:onReadStream(streamId, connection)
         g_currentMission.uyf.sortByLevel = self.sortByLevel
     end
 
-    Logging.info(MOD_NAME .. ":SETTINGS :: Completed receiving new settings", streamId)
+    -- Logging.info(MOD_NAME .. ":SETTINGS :: Completed receiving new settings", streamId)
 end
 
 ---Sends the current settings to a client which is connecting to a multiplayer game
@@ -103,7 +103,7 @@ function Settings:onWriteStream(streamId, connection)
     streamWriteInt16(streamId, self.maxLevel)
     streamWriteBool(streamId, self.sortByLevel)
 
-    Logging.info(MOD_NAME .. ":SETTINGS :: Completed sending new settings", streamId)
+    -- Logging.info(MOD_NAME .. ":SETTINGS :: Completed sending new settings", streamId)
 end
 
 ---Registers read/write listeners
