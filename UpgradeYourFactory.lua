@@ -65,7 +65,7 @@ end
 
 ---Local helper function to get the production point based on it's placeable position on the map
 local function getProductionPointFromPosition(pos)
-	if #g_currentMission.productionChainManager.farmIds < 1 then
+	if g_currentMission.productionChainManager.farmIds == nil then
 		return nil
 	end
 	
