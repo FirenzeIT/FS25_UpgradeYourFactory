@@ -12,7 +12,6 @@ source(modDirectory .. "UpgradeProductionEvent.lua")
 source(modDirectory .. "InGameMenuUpgradeYourFactory.lua")
 source(modDirectory .. "Settings.lua")
 source(modDirectory .. "SettingsUI.lua")
-source(modDirectory .. "SettingsManager.lua")
 source(modDirectory .. "lib/UIHelper.lua")
 addModEventListener(UpgradeYourFactory)
 
@@ -38,11 +37,6 @@ function UpgradeYourFactory:loadMap()
 		xmlFilename = g_currentMission.missionInfo.savegameDirectory .. "/UpgradeYourFactory.xml"
 	end
 	self:loadXML()
-	
-	self.settingsManager = SettingsManager.new()
-	self.settingsManager:restoreSettings()
-	self.MAX_LEVEL = g_currentMission.uyf.maxLevel
-	self.SORT_BY_LEVEL = g_currentMission.uyf.sortByLevel
 	
 	if g_server ~= nil then
         addConsoleCommand("uyfMaxLevel", "Update UpgradeYourFactory max level", "updateMaxLevel", self)
@@ -351,7 +345,7 @@ function UpgradeYourFactory:updateMaxLevel(arg)
 	-- re-initialize the loaded productions based on the current max level
 	-- self:forceMaxLevel()
 	
-	-- UYFInfo("Global MaxLevel updated to: %d", newLevel)
+	UYFInfo("Global MaxLevel updated to: %d", newLevel)
 	
 	if g_server ~= nil then
 		g_server:broadcastEvent(SyncMaxLevelEvent.new(newLevel), true)
@@ -376,7 +370,7 @@ function UpgradeYourFactory:updateSortByLevel(arg)
 		end
 	end
 
-	-- UYFInfo("Sorting by level has been turned %s", newValue and "on" or "off")
+	UYFInfo("Sorting by level has been turned %s", newValue and "on" or "off")
 
 	if g_server ~= nil then
 		g_server:broadcastEvent(SyncSortByLevelEvent.new(newValue), true)
@@ -391,7 +385,7 @@ function UpgradeYourFactory.saveToXML()
 
 	local xmlFile = XMLFile.create("UpgradeYourFactoryXML", xmlFilename, "UpgradeYourFactory")
 	xmlFile:setInt("UpgradeYourFactory#maxLevel", UpgradeYourFactory.MAX_LEVEL)
-	xmlFile:setBool("UpgradeYourFactory#sortByLevel", UpgradeYourFactory.SORT_BY_LEVEL or true)
+	xmlFile:setBool("UpgradeYourFactory#sortByLevel", UpgradeYourFactory.SORT_BY_LEVEL)
 
 	-- check if player has owned production installed
 	if g_currentMission.productionChainManager.farmIds ~= nil then
@@ -434,10 +428,6 @@ function UpgradeYourFactory.saveToXML()
 		end
 	end
 	xmlFile:save()
-	
-	if UpgradeYourFactory.settingsManager ~= nil then
-		UpgradeYourFactory.settingsManager:saveSettings()
-	end
 end
 
 function UpgradeYourFactory:loadXML()
@@ -447,6 +437,10 @@ function UpgradeYourFactory:loadXML()
 	end
 
 	local xmlFile = XMLFile.loadIfExists("UpgradeYourFactoryXML", xmlFilename)
+	
+	if not xmlFile then
+		return
+	end
 	-- if not xmlFile then
 		-- UYFInfo('loadXML :: no xmlFile to load')
 		-- SyncMaxLevelEvent.new()
@@ -523,8 +517,10 @@ function UpgradeYourFactory:loadXML()
 	end
 
 	local sortByLevel = getXMLBool(xmlFile.handle, "UpgradeYourFactory#sortByLevel")
-	self.SORT_BY_LEVEL = sortByLevel
-	g_currentMission.uyf.sortByLevel = sortByLevel
+	if sortByLevel ~= nil then
+		self.SORT_BY_LEVEL = sortByLevel
+		g_currentMission.uyf.sortByLevel = sortByLevel
+	end
 
 	if g_server ~= nil then
 		g_server:broadcastEvent(SyncMaxLevelEvent.new(g_currentMission.uyf.maxLevel), true)
